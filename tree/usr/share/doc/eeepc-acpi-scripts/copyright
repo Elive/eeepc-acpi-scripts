@@ -1,0 +1,27 @@
+This package was debianized by Ben Armstrong <synrg@sanctuary.nslug.ns.ca> and
+Nico Golde <nion@debian.org> on Sun, 17 Feb 2008 12:49:45 -0400.
+
+It was downloaded from: http://alioth.debian.org/projects/debian-eeepc/
+
+Upstream Authors:
+
+    Eric Cooper <ecc@cmu.edu>
+    Ben Armstrong <synrg@sanctuary.nslug.ns.ca>
+    Nico Golde <nion@debian.org>
+    Damyan Ivanov <dmn@debian.org>
+    Darren Salt <linux@youmustbejoking.demon.co.uk>
+    Raphael Geissert <geissert@debian.org>
+
+Copyright:
+
+    Copyright (C) 2007-2008 Eric Cooper
+    Copyright (C) 2008      Nico Golde
+    Copyright (C) 2008-2009 Ben Armstrong
+    Copyright (C) 2008-2009 Damyan Ivanov
+    Copyright (C) 2008-2009 Darren Salt
+    Copyright (C) 2009      Raphael Geissert
+
+License:
+
+This native Debian package is licensed under the GPL, see
+`/usr/share/common-licenses/GPL'.

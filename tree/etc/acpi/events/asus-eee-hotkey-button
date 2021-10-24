@@ -1,0 +1,2 @@
+event=button/(wlan|zoom|mute|volume|prog|screenlock)
+action=/usr/share/acpi-support/eeepc-acpi-scripts/button.sh %e

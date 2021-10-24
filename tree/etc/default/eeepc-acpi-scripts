@@ -1,0 +1,35 @@
+# For a description of the available settings, see
+# /usr/share/doc/eeepc-acpi-scripts/examples/eeepc-acpi-scripts.default.gz
+
+ENABLE_OSD='no'
+OSD_FONT='DejaVuSans 36'
+ENABLE_OSD_BRIGHTNESS='no'
+SOUND_LABEL=
+SOUND_SWITCH=
+SOUND_SWITCH_EXCLUSIVE=
+SOUND_PREFER_MASTER=yes
+SOUND_VOLUME_STEP=
+DETAILED_SOUND_INFO=no
+VGA_ON='--auto'
+LVDS_OFF='--off'
+BLUETOOTH_FALLBACK_TO_HCITOOL='yes'
+SOFTBTN1_ACTION='handle_blank_screen'
+SOFTBTN2_ACTION='NONE'
+SOFTBTN3_ACTION='handle_camera_toggle'
+SOFTBTN4_ACTION='handle_bluetooth_toggle'
+SOFTBTNSHE_ACTION='handle_shengine'
+FnF_WIRELESS='NONE'
+FnF_TOUCHPAD='handle_touchpad_toggle'
+#FnF_TOUCHPAD='acpi_fakekey ${KEY_F22}'
+FnF_RESCHANGE='NONE'
+FnF_BACKLIGHTOFF='handle_blank_screen'
+#FnF_BACKLIGHTOFF='acpi_fakekey ${KEY_BACKLIGHT_OFF}'
+FnF_VGATOGGLE='handle_vga_toggle'
+FnF_TASKMGR='NONE'
+FnF_MUTE='NONE'
+FnF_VOLUMEDOWN='NONE'
+FnF_VOLUMEUP='NONE'
+PWR_CLOCK_AC=
+PWR_CLOCK_BATTERY=
+#DEFAULT_SHENGINE_CONFIG=manual
+#SHENGINE_FORCE_ENABLE=0

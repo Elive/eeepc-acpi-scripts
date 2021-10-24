@@ -1,0 +1,20 @@
+eeepc-acpi-scripts for Debian
+-----------------------------
+
+The Eee PC support for Debian is under constant improvement. Please also
+check our wiki and contribute.
+
+  http://wiki.debian.org/DebianEeePC
+
+To enable OSD, change ENABLE_OSD to yes in /etc/default/eeepc-acpi-scripts and
+make sure you have installed the libnotify-bin package as well as a package to
+receive and display the notifications, such as notification-daemon.
+
+/etc/default/eeepc-acpi-scripts contains several other configuration items,
+ranging from what to do when the lid is closed to what effect various function
+keys have. The documentation for these options can be found in
+/usr/share/eeepc-acpi-scripts/examples/.
+
+ -- Darren Salt <linux@youmustbejoking.demon.co.uk>  Wed, 10 Jun 2009 22:30:55 +0100
+ -- Ben Armstrong <synrg@sanctuary.nslug.ns.ca>  Fri, 12 Nov 2010 07:58:23 -0400
+

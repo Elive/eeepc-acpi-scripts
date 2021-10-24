@@ -1,0 +1,2 @@
+event=hotkey ASUS010:00 (0000001[0123456abcd]|0000003[012789])
+action=/usr/share/acpi-support/eeepc-acpi-scripts/hotkey.sh %e

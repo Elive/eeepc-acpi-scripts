@@ -1,0 +1,14 @@
+[Unit]
+Description=Load EeePC-specific settings
+DefaultDependencies=no
+Before=sysinit.target
+ConditionPathExistsGlob=/sys/devices/platform/eeepc*
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/etc/init.d/eeepc-acpi-scripts start
+ExecStop=/etc/init.d/eeepc-acpi-scripts stop
+
+[Install]
+WantedBy=sysinit.target

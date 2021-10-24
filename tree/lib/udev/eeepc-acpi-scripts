@@ -1,0 +1,27 @@
+#! /bin/sh
+(
+#. /lib/udev/hotplug.functions
+#wait_for_file ... something which will indicate /var being r/w?
+PKG=eeepc-acpi-scripts
+PKG_DIR=/usr/share/acpi-support/$PKG
+. $PKG_DIR/lib/sound.sh
+
+SOUND_LABEL=
+SOUND_SWITCH=
+SOUND_SWITCH_EXCLUSIVE=
+SOUND_VOLUME_STEP=
+configureSound
+
+SOUND_VARS="$(
+echo '# Sourced by files in eeepc-acpi-scripts'
+echo '# This is a generated file; modifications will be overwritten'
+echo AMIXER=\'$(echo "$AMIXER" | sed -e "s/'/'\\''/g")\'
+echo DEF_SOUND_LABEL=\'"$(echo "$SOUND_LABEL" | sed -e "s/'/'\\''/g")"\'
+echo DEF_SOUND_SWITCH=\'"$(echo "$SOUND_SWITCH" | sed -e "s/'/'\\''/g")"\'
+echo DEF_SOUND_SWITCH_EXCLUSIVE=\'"$(echo "$SOUND_SWITCH_EXCLUSIVE" | sed -e "s/'/'\\''/g")"\'
+echo DEF_SOUND_VOLUME_STEP=\'"$(echo "$SOUND_VOLUME_STEP" | sed -e "s/'/'\\''/g")"\'
+)"
+OLD_SOUND_VARS="$(cat "$SOUND_FILE" 2>/dev/null)"
+test "$SOUND_VARS" = "$OLD_SOUND_VARS" || echo "$SOUND_VARS" >"$SOUND_FILE"
+) &
+test "$1" = '' || wait %1

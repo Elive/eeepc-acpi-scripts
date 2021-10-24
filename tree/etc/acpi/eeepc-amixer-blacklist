@@ -1,0 +1,9 @@
+# Mixer control blacklist.
+# Append '!x' (or '!x,y' etc.) to remove from the blacklist for a given
+# control type.
+# Recognised control types are "volume" and "mute",
+# corresponding to ALSA's pvolume and pswitch.
+Mic
+PCM
+Master
+Beep !mute

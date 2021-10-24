@@ -1,0 +1,140 @@
+#! /bin/sh -e
+### BEGIN INIT INFO
+# Provides:          eeepc-acpi-scripts
+# Required-Start:    udev mountkernfs $remote_fs
+# Required-Stop:     
+# Default-Start:     S
+# Default-Stop:
+# Short-Description: Load modules which are useful on EeePCs and similar hardware
+### END INIT INFO
+
+PKG=eeepc-acpi-scripts
+PKG_DIR=/usr/share/acpi-support/$PKG
+# exit if package not installed
+test -f $PKG_DIR/lib/functions.sh || exit 0
+
+# exit if eeepc-laptop or eeepc-wmi isn't loaded (should be loaded by udev)
+[ -d /sys/devices/platform/eeepc ] || [ -d /sys/devices/platform/eeepc-wmi ]  || exit 0
+
+PATH="/sbin:/bin"
+
+. /lib/lsb/init-functions
+
+load_module ()
+{
+  log_action_cont_msg "$1"
+  maybe_warn modprobe $@
+}
+
+maybe_warn ()
+{
+  local WARN
+  WARN="$($@ 2>&1 || :)"
+  if [ -n "$WARN" ]; then
+    log_warning_msg "$WARN"
+  fi
+}
+
+case "$1" in
+  start|restart|reload|force-reload)
+
+    # First, get the kernel version.
+
+    KERNEL="`uname -r`"
+    case "$KERNEL" in
+      2.6.*)
+	KERNEL="`echo $KERNEL | sed -re 's/^([0-9]+\.){2}([0-9]+).*$/\2/'`"
+	;;
+      3.*)
+        KERNEL=36   # simulate a sufficiently new 2.6.x kernel
+        ;;
+      *)
+	KERNEL=0
+        ;;
+    esac
+
+    # Now load the modules. We ignore failure since it's possible that
+    # they're built into the running kernel.
+
+    log_action_begin_msg 'Loading EeePC support modules'
+
+    # Load pciehp if required.
+    # There are three recognised cases:
+    # - kernel 2.6.26 & older: two parameters required
+    # - kernel 2.6.27 & .28  : one of those parameters has been removed
+    # - kernel 2.6.29 & newer: hotplugging is handled in eeepc-laptop except on the
+    #                          EeePC 900A model
+    # - kernel 2.6.32 & newer: eeepc-laptop also works on the EeePC 900A
+    if [ -d /sys/module/pciehp ]; then
+      # Hmm, already present
+      if [ "$KERNEL" -ge 29 -a "`cat /sys/class/dmi/id/product_name`" != "900A" ]; then
+        # 2.6.29 and newer on all but the EeePC 900A - unload pciehp if loaded
+        log_warning_msg 'Module "pciehp" is loaded; trying to unload'
+        maybe_warn modprobe -r pciehp
+      elif [ "$KERNEL" -ge 32 ]; then
+        # 2.6.32 and newer on all EeePC models - unload pciehp if loaded
+        log_warning_msg 'Module "pciehp" is loaded; trying to unload'
+        maybe_warn modprobe -r pciehp
+      fi
+    else
+      # Load it if needed
+      if [ "$KERNEL" -lt 27 ]; then
+        # 2.6.26 and older
+        load_module pciehp pciehp_force=1 pciehp_slot_with_bus=1
+      elif [ "$KERNEL" -lt 29 ]; then
+        # 2.6.27 and 2.6.28
+        load_module pciehp pciehp_force=1
+      elif [ "$KERNEL" -lt 32 -a "`cat /sys/class/dmi/id/product_name`" = "900A" ]; then
+        # 2.6.29 to 2.6.31 on the EeePC 900A
+        load_module pciehp pciehp_force=1
+      fi
+    fi
+
+    # Load rfkill-input if possible, i.e. kernel is 2.6.28, .29 or .30.
+    # This results in faster WLAN hw toggling.
+    if [ "$KERNEL" -ge 28 -a "$KERNEL" -le 30 ]; then
+      if grep -q '^H.*\brfkill\b' /proc/bus/input/devices; then
+	:
+      else
+        load_module rfkill-input
+      fi
+    fi
+
+    # Done.
+
+    log_action_end_msg 0
+
+    if [ -f $PKG_DIR/lib/shengine.sh ]; then
+	log_action_begin_msg 'Setting super hybrid engine according to configuration'
+	if [ -f /etc/default/eeepc-acpi-scripts ]; then
+	    . /etc/default/eeepc-acpi-scripts
+	fi
+	. $PKG_DIR/lib/shengine.sh
+        if shengine_supported; then
+            if [ "${SHENGINE_SETTING:-auto}" != auto ]; then
+                log_action_cont_msg '(manual)'
+            elif [ "$(cat /sys/class/power_supply/AC0/online 2>/dev/null)" = 0 ]; then
+                log_action_cont_msg '(battery)'
+                set_shengine "${PWR_CLOCK_BATTERY:-$(($SHENGINE_LIMIT - 1))}" &
+            else
+                log_action_cont_msg '(AC)'
+                set_shengine "${PWR_CLOCK_AC:-0}" &
+            fi
+        else
+            log_action_cont_msg '(model not supported)'
+        fi
+	log_action_end_msg $?
+    fi
+    ;;
+
+  stop)
+    # Nothing to do.
+    ;;
+
+  *)
+    echo "Usage: /etc/init.d/eeepc-acpi-scripts {start|stop|restart|reload|force-reload}"
+    exit 1
+    ;;
+esac
+
+exit 0
